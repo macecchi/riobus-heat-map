@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mapa de calor - regiões com mais ônibus - Rio Bus</title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="leaflet-heat.js"></script>
+<script src="utils.js"></script>
+<style>
+html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	width: 100%;
+	height: 100%;
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<script type="text/javascript">
+
+var map = L.map('map').setView([-22.9235, -43.4096], 11);
+
+var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
+
+console.log('Fetching data...');
+getJSON('http://relatorios.riob.us/api/queries/42/results.json?api_key=b98c1ffe48207d18d9dcadd8f74e7af0b9d8a9f2').then(function(data) {
+    console.log('Total samples: ' + data.query_result.data.rows.length);
+
+    var layerSamples = [];
+    var maxIntensity = 0;
+    data.query_result.data.rows.forEach(function(sample) {
+    	layerSamples.push([sample.lat, sample.long, sample.amostra]);
+    	maxIntensity = Math.max(maxIntensity, sample.amostra);
+    });
+
+    console.log('Total samples: ' + data.query_result.data.rows.length);
+    console.log('Max sample: ' + maxIntensity);
+
+	var heat = L.heatLayer(layerSamples, {max: maxIntensity}).addTo(map);
+
+}, function(status) {
+	alert('Error querying re:dash.');
+});
+
+</script>
+</body>
+</html>
