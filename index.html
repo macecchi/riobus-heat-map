@@ -1,46 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Mapa de calor - regiões com mais ônibus - Rio Bus</title>
-<link rel="stylesheet" href="leaflet.css">
-<script src="leaflet.js"></script>
-<script src="leaflet-heat.js"></script>
-<script src="utils.js"></script>
-<style>
-html,
-body {
-	height: 100%;
-}
-
-body {
-	margin: 0;
-	padding: 0;
-}
-
-#map {
-	width: 100%;
-	height: 100%;
-}
-</style>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="leaflet.css">
+	<link rel="stylesheet" href="custom.css">
+	<script src="leaflet.js"></script>
+	<script src="leaflet-heat.js"></script>
+	<script src="utils.js"></script>
+	<script src="map.js"></script>
 </head>
+
 <body>
-<div id="map"></div>
+	<div id="map">
+	</div>
 
-<script src="results.json"></script>
-<script>
-var map = L.map('map').setView([-22.9235, -43.4096], 11);
-
-var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
-
-console.log('Fetching data...');
-addHeatSamples(results);
-// getJSON('http://relatorios.riob.us/api/queries/42/results.json?api_key=b98c1ffe48207d18d9dcadd8f74e7af0b9d8a9f2').then(addHeatSamples, function(error) {
-// 	alert('Error querying data from API.');
-// });
-
-</script>
+	<script>
+		loadMap();
+	</script>
 </body>
 </html>

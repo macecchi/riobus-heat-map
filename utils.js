@@ -1,32 +1,17 @@
-function getJSON(url) {
-	return new Promise(function(resolve, reject) {
-		var xhr = new XMLHttpRequest();
-		xhr.open('get', url, true);
-		xhr.responseType = 'json';
-		xhr.onload = function() {
-			var status = xhr.status;
-			if (status == 200) {
-				resolve(xhr.response);
-			} else {
-				reject(status);
-			}
-		};
-		xhr.send();
-	});
-};
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
-function addHeatSamples(data) {
-	console.log('Total samples: ' + data.query_result.data.rows.length);
+function loadScript(file, completion) {
+	var script = document.createElement('script');
+	script.src = file;
+	script.onload = completion;
 
-	var layerSamples = [];
-	var maxIntensity = 0;
-	data.query_result.data.rows.forEach(function(sample) {
-		layerSamples.push([sample.lat, sample.long, sample.amostra]);
-		maxIntensity = Math.max(maxIntensity, sample.amostra);
-	});
-
-	console.log('Total samples: ' + data.query_result.data.rows.length);
-	console.log('Max sample: ' + maxIntensity);
-
-	var heat = L.heatLayer(layerSamples, {max: maxIntensity}).addTo(map);
+	document.head.appendChild(script);
 }
