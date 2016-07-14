@@ -39,8 +39,9 @@ function loadMap() {
 	setupMap();
 
 	// Configure data source
-	console.log('Fetching data from ' + file + '...');
-	loadScript(file, function () {
+	var filePath = 'data/' + file; 
+	console.log('Fetching data from ' + filePath + '...');
+	loadScript(filePath, function () {
 		console.log('Finished loading file.');
 		addHeatSamples(results);
 		info.update();
