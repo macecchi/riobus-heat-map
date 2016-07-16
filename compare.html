@@ -11,17 +11,15 @@
 </head>
 
 <body>
-	<div id="map">
+	<div id="left" class="map-50">
+	</div>
+
+	<div id="right" class="map-50">
 	</div>
 
 	<script>
-	var file = getParameterByName('file');
-
-	if (file != null) {
-		loadMap('map', file);
-	} else {
-		alert('No file specified in query parameters.');
-	}
+	loadMap('left', 'results20150708.js');
+	loadMap('right', 'results20160708.js');
 	</script>
 </body>
 </html>

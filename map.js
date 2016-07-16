@@ -1,15 +1,13 @@
 document.title = "Mapa de calor - regiões com mais ônibus - Rio Bus";
 
-var totalSamples = 0;
 var maxSample = 0;
 var maxIntensity = getParameterByName('maxIntensity');
 var maxIntensityDefault = 300;
-var file = getParameterByName('file');
+var maps = [];
+var focusedMap;
 
-var map, info;
-
-function addHeatSamples(data) {
-	totalSamples = data.query_result.data.rows.length;
+function addHeatSamples(map, data) {
+	var totalSamples = data.query_result.data.rows.length;
 	console.log('Total samples: ' + data.query_result.data.rows.length);
 
 	var layerSamples = [];
@@ -28,38 +26,38 @@ function addHeatSamples(data) {
 	console.log('Max used: ' + maxIntensity);
 
 	var heat = L.heatLayer(layerSamples, { max: maxIntensity }).addTo(map);
+
+	return totalSamples;
 }
 
-function loadMap() {
-	if (file == null) {
-		alert('No file specified in query parameters.');
-		return;
-	}
-
-	setupMap();
+function loadMap(elementID, fileName) {
+	var map = setupMap(elementID);
+	map.on('moveend', updateMapsPosition);
+	map.on('focus', mapDidFocus);
+	maps.push(map);
 
 	// Configure data source
-	var filePath = 'data/' + file; 
+	var filePath = 'data/' + fileName;
 	console.log('Fetching data from ' + filePath + '...');
 	loadScript(filePath, function () {
 		console.log('Finished loading file.');
-		addHeatSamples(results);
-		info.update();
+		var totalSamples = addHeatSamples(map, results);
+		loadInfoBox(map, fileName, totalSamples);
 	});
 }
 
-function setupMap() {
-	map = L.map('map').setView([-22.9235, -43.4096], 11);
+function setupMap(elementID) {
+	var map = L.map(elementID).setView([-22.9235, -43.4096], 11);
 
 	var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 	}).addTo(map);
-	
-	loadInfoBox();
+
+	return map;
 }
 
-function loadInfoBox() {
-	info = L.control();
+function loadInfoBox(map, fileName, totalSamples) {
+	var info = L.control();
 
 	info.onAdd = function (map) {
 	    this._div = L.DomUtil.create('div', 'info');
@@ -68,7 +66,8 @@ function loadInfoBox() {
 	};
 
 	info.update = function(props) {
-	    this._div.innerHTML = 
+	    this._div.innerHTML =
+	        '<b>Dataset: </b>' + fileName + '<br>' +
 	        '<b>Total samples: </b>' + totalSamples + '<br>' +
 	        '<b>Maximum used: </b>' + maxIntensity + '<br>' +
 	        '<b>Maximum read: </b>' + maxSample + '<br>' +
@@ -76,4 +75,25 @@ function loadInfoBox() {
 	};
 
 	info.addTo(map);
+}
+
+function mapDidFocus(e) {
+	focusedMap = e.target;
+}
+
+function updateMapsPosition(e) {
+	var updatedMap = e.target;
+	if (focusedMap && updatedMap != focusedMap) {
+		return;
+	}
+
+	var newCenter = updatedMap.getCenter();
+	var newZoom = updatedMap.getZoom();
+
+	for (var map of maps) {
+		if (map == updatedMap) continue;
+
+		map.panTo(newCenter, { animate: false });
+		map.setZoom(newZoom, { animate: false });
+	}
 }
