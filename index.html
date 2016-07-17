@@ -12,7 +12,7 @@
 
 <body>
 	<div id="loading" class="loading">
-		<p>Carregando dados...</p>
+		<p id="loading-message">Carregando dados...</p>
 	</div>
 
 	<div id="map">
@@ -21,9 +21,9 @@
 	<script>
 	(function(){
 		var file = getParameterByName('file');
-
 		if (file == null) {
 			alert('No file specified in query parameters.');
+			document.getElementById('loading-message').innerHTML = 'Erro';
 			return;
 		}
 
