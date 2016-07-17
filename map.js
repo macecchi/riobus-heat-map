@@ -30,7 +30,7 @@ function addHeatSamples(map, data) {
 	return totalSamples;
 }
 
-function loadMap(elementID, fileName) {
+function loadMap(elementID, fileName, callback) {
 	var map = setupMap(elementID);
 	map.on('moveend', updateMapsPosition);
 	map.on('focus', mapDidFocus);
@@ -43,6 +43,8 @@ function loadMap(elementID, fileName) {
 		console.log('Finished loading file.');
 		var totalSamples = addHeatSamples(map, results);
 		loadInfoBox(map, fileName, totalSamples);
+
+		if (callback) callback();
 	});
 }
 
@@ -68,10 +70,9 @@ function loadInfoBox(map, fileName, totalSamples) {
 	info.update = function(props) {
 	    this._div.innerHTML =
 	        '<b>Dataset: </b>' + fileName + '<br>' +
-	        '<b>Total samples: </b>' + totalSamples + '<br>' +
-	        '<b>Maximum used: </b>' + maxIntensity + '<br>' +
-	        '<b>Maximum read: </b>' + maxSample + '<br>' +
-	        '<b>Maximum default: </b>' + maxIntensityDefault;
+	        '<b>Samples: </b>' + totalSamples + '<br>' +
+	        '<b>Maximum detected: </b>' + maxSample + '<br>' +
+	        '<b>Maximum used: </b>' + maxIntensity + '<br>';
 	};
 
 	info.addTo(map);

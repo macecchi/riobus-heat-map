@@ -11,6 +11,10 @@
 </head>
 
 <body>
+	<div id="loading" class="loading">
+		<p>Carregando dados...</p>
+	</div>
+
 	<div id="left" class="map-50">
 	</div>
 
@@ -18,8 +22,15 @@
 	</div>
 
 	<script>
-	loadMap('left', 'results20150708.js');
-	loadMap('right', 'results20160708.js');
+	var loaded = 0;
+	loadMap('left', 'results20150708.js', mapFinishedLoading);
+	loadMap('right', 'results20160708.js', mapFinishedLoading);
+
+	function mapFinishedLoading() {
+		if (++loaded == 2) {
+			document.getElementById('loading').style.display = 'none';
+		}
+	}
 	</script>
 </body>
 </html>

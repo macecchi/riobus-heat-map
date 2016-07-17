@@ -11,17 +11,28 @@
 </head>
 
 <body>
+	<div id="loading" class="loading">
+		<p>Carregando dados...</p>
+	</div>
+
 	<div id="map">
 	</div>
 
 	<script>
-	var file = getParameterByName('file');
+	(function(){
+		var file = getParameterByName('file');
 
-	if (file != null) {
-		loadMap('map', file);
-	} else {
-		alert('No file specified in query parameters.');
-	}
+		if (file == null) {
+			alert('No file specified in query parameters.');
+			return;
+		}
+
+		loadMap('map', file, mapFinishedLoading);
+
+		function mapFinishedLoading() {
+			document.getElementById('loading').style.display = 'none';
+		}
+	})();
 	</script>
 </body>
 </html>
